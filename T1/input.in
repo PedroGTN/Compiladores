@@ -8,7 +8,8 @@ algoritmo
     { leitura de nome e idade do teclado }
     leia(nome)
     leia(idade)
-
-    { saida da mensagem na tela }
+    
+    { saida da mensagem na tela 
+    }
     escreva(nome, " tem ", idade, " anos.")
 fim_algoritmo

@@ -1,6 +1,6 @@
 lexer grammar Jander;
 
-PALAVRA_CHAVE : 'algoritmo' | 'declare' | 'fim_algoritmo' | 'leia' | 'escreva'
+PALAVRA_CHAVE : 'algoritmo' | 'declare' | 'fim_algoritmo' | 'leia' | 'escreva' | 'literal' | 'inteiro'
     ;
 SIMBOLO_RESERV : ':'| '(' | ')' | ','
     ;
@@ -11,7 +11,7 @@ NUMREAL	: ('+'|'-')?('0'..'9')+ ('.' ('0'..'9')+)?
 IDENT : ('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'0'..'9')*
 	 ;
 
-TEXT
+CADEIA
     :   '"' .*? '"'
     ;
 
