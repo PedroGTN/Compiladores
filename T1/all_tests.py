@@ -8,14 +8,19 @@ if not os.path.exists(output_path):
 
 input_list = os.listdir(instances_path + '/entrada')
 
-for file1 in input_list:
-    command1 = 'python3 t1.py ' + instances_path + '/entrada/' + file1 
-    command1 += ' ' + output_path + file1
+for i in input_list:
+    #comando para rodar o t1.py, onde ele coloca o path do arquivo de entrada 
+    #e o do arquivo de saida
+    command1 = 'python3 t1.py ' + instances_path + '/entrada/' + i 
+    command1 += ' ' + output_path + i
+    
+    #comando para rodar o run_teste.py, onde ele coloca o path do  
+    #arquivo de saida esperada e o do arquivo de saida gerado pelo t1.py
+    command2 = 'python3 run_teste.py ' + instances_path + '/saida/' + i
+    command2 += ' ' + output_path + i
 
-    command2 = 'python3 run_teste.py ' + instances_path + '/saida/' + file1
-    command2 += ' ' + output_path + file1
-
+    print('\n' + str(command1))
     os.system(str(command1))
+    print('\n' + str(command2))
     os.system(str(command2))
-
-    #input("Press Enter to continue...")
+    input("\nAperte enter para continuar...")
