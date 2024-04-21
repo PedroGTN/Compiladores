@@ -1,62 +1,33 @@
 import sys
 from antlr4 import *
-from antlr4.error.ErrorListener import ErrorListener, ProxyErrorListener
-from Jander import Jander
+from antlr4.error.ErrorListener import ProxyErrorListener
+from Jander import Jander 
+#Importanto error listener customizado
+#para poder ter mensagens de erro customizadas
+from JanderErrorListener import JanderErrorListener 
+#Importanto classe de vocabulary para poder 
+#saber o nome de um tipo de token
 from Vocabulary import Vocabulary
-from importlib import reload
 
-#PALAVRA_CHAVE=1
-#SIMBOLO_RESERV=2
-#NUM_INT=3
-#NUM_REAL=4
-#MATH=5
-#IDENT=6
-#CADEIA=7
-#COMENTARIO=8
-#WS=9
-
-
-#Linha 5: ~ - simbolo nao identificado
-
-class JanderErrorListener(ErrorListener):
-    def __init__(self, output_archive) -> None:
-        self.output_archive = output_archive
-        super().__init__()
-
-    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
-        if(msg.split('\'')[1][0] == '\"'):
-            self.output_archive.write("Linha " + str(line) + ': cadeia literal nao fechada')
-        elif(msg.split('\'')[1][0] == '{'):
-            self.output_archive.write("Linha " + str(line) + ': comentario nao fechado')
-        else:
-            self.output_archive.write("Linha " + str(line) + ': ' + str(msg.strip('\'')[-1]) + ' - simbolo nao identificado\n')
-        exit()
-    
-    def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):
-        print('Ambiguity')
-        
-    def reportAttemptingFullContext(self, recognizer, dfa, startIndex, stopIndex, conflictingAlts, configs):
-        print('AttemptingFullContext')
-
-    def reportContextSensitivity(self, recognizer, dfa, startIndex, stopIndex, prediction, configs):
-        print('ContextSensitivity')
-
-
+#Arrumando input caso esteja pra Windows e não linux
 archive_input = sys.argv[1].replace('\\', '/')
 archive_output = sys.argv[2].replace('\\', '/')
 
-
+#Criando input_string como utf-8 pra não dar problema com acentos
 input_string = FileStream(archive_input, 'utf-8')
 lexer = Jander(input_string)
-
 
 
 t = lexer.nextToken()
 vocab = Vocabulary(lexer)
 with open(archive_output, 'w') as out:
+
+    #Removendo errorlisteners padrões para que não haja mensagem no console
+    #apenas no arquivo de saída para que esteja exatamente como o output esperado
     lexer.removeErrorListeners()
     JanderErro = [JanderErrorListener(out)]
     lexer.addErrorListener(ProxyErrorListener(JanderErro))
+
     while(t.type != Token.EOF):
         txt = '\'' + t.text + '\'' 
         match (t.type):

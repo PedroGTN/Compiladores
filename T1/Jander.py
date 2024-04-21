@@ -1,5 +1,6 @@
 # Generated from Jander.g4 by ANTLR 4.13.1
 from antlr4 import *
+#Importando função que já deveria ter sido importada mas o python não quis
 from antlr4.error.Errors import LexerNoViableAltException
 from io import StringIO
 import sys

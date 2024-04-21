@@ -6,6 +6,7 @@ class Vocabulary():
     def getTypeName(self, type:int):
         return self.vocab_dict[type]
 
+    #Abre arquivo de tokens e coloca eles em um dicionário
     def __init__(self, Lexer):
         self.token_file = open(Lexer.grammarFileName[:-2] + 'tokens')
         self.file_lines = self.token_file.readlines()
