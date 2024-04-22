@@ -1,5 +1,5 @@
 
-*T1*:
+# T1:
 
 Na pasta T1 se encontra o código utilizado para a resolução do trabalho 1 (Analise léxica). Um adendo sobre o código desta pasta, caso rede o antlr novamente, é necessario incluir o import 
 
