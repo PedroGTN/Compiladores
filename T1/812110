@@ -1,1 +1,0 @@
-Uso: java -jar compiladores-corretor-automatico.java <caminho para o compilador executavel> <caminho para o compilador gcc> <caminho para uma pasta temporaria> <caminho para a pasta com os casos de teste> "RAs dos alunos do grupo" "tipoTeste (t1|t2|t3|t4|t5|gabarito, em qualquer combinação)"
