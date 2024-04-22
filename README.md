@@ -1,5 +1,19 @@
+Membros do Grupo:
+Jayme Sakae dos Reis Furuyama, RA: 761044
+João Pedro Trevisan, RA: 769774
+Pedro Guilherme Torres das Neves, RA: 812110
+
+Repositórios para a submissão dos trabalhos da disciplina de construção de compiladores 2024/1 ministrada pelo Prof. Dr. Daniel Lucrédio
+
+
 T1:
-O antlr para Python está sendo usado, mas peço que não tente rodar de novo no T1 pois o lexer que ele gera possui um bug e por algum motivo é preciso importar uma função de error handling manualmente. 
+Na pasta T1 se encontra o código utilizado para a resolução do trabalho 1 (Analise léxica). Um adendo sobre o código desta pasta, caso rede o antlr novamente, é necessario incluir o import 
+
+```bash
+from antlr4.error.Errors import LexerNoViableAltException
+```
+no arquivo Jander.py, pois por algum problema da tradução de Java para Python pelo antlr deve ter algum problema, dado isso, decidimos de fazer isso manualmente.
+
 O T1 está dentro na pasta T1, no arquivo "t1.py". Para rodar o programa, dê git clone neste repositório dentro do WSL, abra a pasta T1, e execute:
 
 ```bash
