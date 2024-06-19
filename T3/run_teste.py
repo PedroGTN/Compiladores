@@ -19,4 +19,9 @@ with open(compare1, 'r') as arc1, open(compare2, 'r') as arc2:
                 print(linha1, "!=", linha2)
                 exit()
 
+    if len(arc1.readlines()) != len(arc2.readlines()):
+        print("~~~~~~~~~~ERRO~~~~~~~~~~")
+        print("Arquivos de tamanhos diferentes\n")
+        exit()
+
 print("sucesso")
