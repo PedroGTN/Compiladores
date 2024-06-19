@@ -49,7 +49,7 @@ class JanderParserErrorListener(ErrorListener):
         else:
             self.output_archive.write("Linha " + str(line) + ': ' +  msg + '\n')
 
-        print("Fim da compilacao")
+        self.output_archive.write("Fim da compilacao\n")
         exit()
 
     def reportAmbiguity(self, recognizer, dfa, startIndex, stopIndex, exact, ambigAlts, configs):

@@ -1,1 +1,2 @@
 Linha 30: | - simbolo nao identificado
+Fim da compilacao
