@@ -36,8 +36,10 @@ with open(archive_output, 'w') as out:
     if parser.getNumberOfSyntaxErrors() > 0:
         out.write("syntax errors")
     else:
-        vinterp = VisitorInterp(tree, lexer)
+        vinterp = VisitorInterp(tree, lexer, out)
         vinterp.visitPrograma()
+
+    out.write('Fim da compilacao')
     
 
     Token.type

@@ -7,6 +7,20 @@ class Vocabulary():
 
     def getTypeName(self, type:int):
         return self.vocab_dict[type]
+    
+    
+    def isToken(self, v):
+        return v in self.vocab_dict.values()
+    
+    
+    def get_key(self, val):
+   
+        for key, value in self.vocab_dict.items():
+            if val == value:
+                return key
+    
+        return 1000
+    
 
     #Abre arquivo de tokens e coloca eles em um dicionário
     def __init__(self, Lexer):

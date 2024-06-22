@@ -21,7 +21,7 @@ for i in input_list:
     command2 = 'python3 run_teste.py ' + instances_path + '/saida/' + i
     command2 += ' ' + output_path + i
 
-    print('\n' + str(command1))
+    # print('\n' + str(command1))
     os.system(str(command1))
 #     print('\n' + str(command2))
     os.system(str(command2))
