@@ -67,7 +67,15 @@ class VisitorInterp(JanderListener):
                         print('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                 else:
                     self.dict[k] = line[-1]
-        elif(line[1] == '<-'):
+        else:
+            for k in line:
+                # print(k, self.vocab.isToken(k), k in self.dict.keys())
+                if not self.vocab.isToken(k) and not k in self.dict.keys():
+                    self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado\n')
+                    if debug:
+                        print('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado')
+
+        if(line[1] == '<-'):
             # print("atribuicao")
             # print(line)
             if self.dict[line[0]] == 'logico':
@@ -100,13 +108,7 @@ class VisitorInterp(JanderListener):
             for k in range(len(lines_list)-1):
                 self.analyzeLine(line[lines_list[k]:lines_list[k+1]+1], line2[lines_list[k]:lines_list[k+1]+1])
 
-        else:
-            for k in line:
-                # print(k, self.vocab.isToken(k), k in self.dict.keys())
-                if not self.vocab.isToken(k) and not k in self.dict.keys():
-                    self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado\n')
-                    if debug:
-                        print('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado')
+        
 
 
 
