@@ -1,0 +1,211 @@
+[@32,423:423='>',<15>,16:6]
+Fim da compilacao
+sucesso
+[@13,240:246='escreva',<27>,12:2]
+Fim da compilacao
+sucesso
+[@66,609:613='lado2',<58>,21:9]
+Fim da compilacao
+sucesso
+[@72,634:638='lado1',<58>,21:34]
+Fim da compilacao
+sucesso
+[@132,1455:1470='"Houve colisao?"',<60>,29:2]
+Fim da compilacao
+sucesso
+[@55,387:399='fim_algoritmo',<53>,19:0]
+Fim da compilacao
+sucesso
+[@16,231:237='escreva',<27>,14:1]
+Fim da compilacao
+sucesso
+[@15,250:258='tRacional',<58>,8:46]
+Fim da compilacao
+sucesso
+[@31,419:431='fim_algoritmo',<53>,17:0]
+Fim da compilacao
+sucesso
+[@13,300:301='40',<55>,8:20]
+Fim da compilacao
+sucesso
+[@52,664:664='/',<9>,23:11]
+Fim da compilacao
+sucesso
+[@18,345:345='!',<72>,14:2]
+Fim da compilacao
+~~~~~~~~~~ERRO~~~~~~~~~~
+43-algoritmo_7-2_apostila_LA_1_erro_linha_14.txt
+1
+Linha 14: ! - simbolo nao identificado
+ != Linha 14: erro sintatico proximo a !
+
+[@90,813:820='fim_para',<38>,27:1]
+Fim da compilacao
+sucesso
+[@25,262:262=')',<67>,14:31]
+Fim da compilacao
+sucesso
+[@13,177:183='escreva',<27>,11:4]
+Fim da compilacao
+sucesso
+[@40,355:368='{ resultados \n',<70>,14:1]
+Fim da compilacao
+sucesso
+[@10,180:183='nome',<58>,10:6]
+Fim da compilacao
+sucesso
+[@33,490:490='-',<54>,13:7]
+Fim da compilacao
+~~~~~~~~~~ERRO~~~~~~~~~~
+12-algoritmo_3-1_apostila_LA_1_erro_linha_13.txt
+1
+Linha 13: erro sintatico proximo a -
+ != Linha 13: no viable alternative at input 'troco-'
+
+[@17,260:260=']',<69>,8:56]
+Fim da compilacao
+sucesso
+[@12,237:239='var',<46>,8:33]
+Fim da compilacao
+sucesso
+[@12,333:336='leia',<26>,9:1]
+Fim da compilacao
+sucesso
+[@3,181:186='intero',<58>,3:27]
+Fim da compilacao
+sucesso
+[@8,251:258='registro',<41>,5:15]
+Fim da compilacao
+sucesso
+[@70,704:712='algoritmo',<20>,28:0]
+Fim da compilacao
+sucesso
+[@32,361:367='escreva',<27>,16:2]
+Fim da compilacao
+sucesso
+[@15,309:318='fahrenheit',<58>,9:2]
+Fim da compilacao
+sucesso
+[@27,272:271='<EOF>',<-1>,15:0]
+Fim da compilacao
+sucesso
+[@13,242:248='declare',<21>,7:1]
+Fim da compilacao
+sucesso
+[@3,210:216='inteiro',<23>,5:24]
+Fim da compilacao
+sucesso
+[@6,221:225='abc40',<58>,5:35]
+Fim da compilacao
+sucesso
+[@83,803:808='fim_se',<29>,27:1]
+Fim da compilacao
+sucesso
+[@25,349:349=')',<67>,11:20]
+Fim da compilacao
+sucesso
+[@11,294:294='<',<16>,8:14]
+Fim da compilacao
+sucesso
+[@11,171:171='0',<55>,11:2]
+Fim da compilacao
+sucesso
+[@25,420:433='abastecimento2',<58>,12:40]
+Fim da compilacao
+sucesso
+[@1,71:71='(',<66>,3:7]
+Fim da compilacao
+sucesso
+[@15,310:310=',',<2>,9:6]
+Fim da compilacao
+sucesso
+[@22,368:368='1',<55>,10:18]
+Fim da compilacao
+sucesso
+[@10,287:288='<-',<5>,8:7]
+Fim da compilacao
+sucesso
+[@162,1082:1083='34',<55>,34:70]
+Fim da compilacao
+sucesso
+[@29,473:479='escreva',<27>,16:1]
+Fim da compilacao
+sucesso
+[@7,125:125=',',<2>,6:8]
+Fim da compilacao
+sucesso
+[@14,148:154='declare',<21>,8:1]
+Fim da compilacao
+sucesso
+[@31,389:401='fim_algoritmo',<53>,12:0]
+Fim da compilacao
+sucesso
+[@46,469:469='/',<9>,18:38]
+Fim da compilacao
+sucesso
+[@35,437:437='<',<16>,15:7]
+Fim da compilacao
+~~~~~~~~~~ERRO~~~~~~~~~~
+17-algoritmo_3-3_apostila_LA_1_erro_linha_15.txt
+1
+Linha 15: erro sintatico proximo a <
+ != Linha 15: no viable alternative at input 'lado2<'
+
+[@8,166:169='leia',<26>,10:1]
+Fim da compilacao
+sucesso
+[@34,491:498='" km/l)\n',<71>,16:18]
+Fim da compilacao
+sucesso
+[@65,538:538='<',<16>,27:13]
+Fim da compilacao
+sucesso
+[@3,98:104='literal',<22>,5:7]
+Fim da compilacao
+sucesso
+[@49,551:556='funcao',<47>,23:0]
+Fim da compilacao
+sucesso
+[@6,255:255='@',<72>,5:2]
+Fim da compilacao
+~~~~~~~~~~ERRO~~~~~~~~~~
+13-algoritmo_3-1_apostila_LA_1_erro_linha_5.txt
+1
+Linha 5: @ - simbolo nao identificado
+ != Linha 5: erro sintatico proximo a @
+
+[@28,228:230='abc',<58>,13:6]
+Fim da compilacao
+sucesso
+[@5,220:221='40',<55>,5:34]
+Fim da compilacao
+sucesso
+[@106,487:487=',',<2>,18:69]
+Fim da compilacao
+sucesso
+[@30,390:402='fim_algoritmo',<53>,21:0]
+Fim da compilacao
+sucesso
+[@7,241:241=':',<65>,5:5]
+Fim da compilacao
+sucesso
+[@11,217:217='(',<66>,8:13]
+Fim da compilacao
+sucesso
+[@42,294:299='19.120',<56>,15:2]
+Fim da compilacao
+sucesso
+[@2,197:197=':',<65>,5:11]
+Fim da compilacao
+sucesso
+[@42,430:442='fim_algoritmo',<53>,20:0]
+Fim da compilacao
+sucesso
+[@84,915:915='|',<72>,30:39]
+Fim da compilacao
+~~~~~~~~~~ERRO~~~~~~~~~~
+39-algoritmo_6-9_apostila_LA_1_erro_linha_30.txt
+1
+Linha 30: | - simbolo nao identificado
+ != Linha 30: erro sintatico proximo a |
+

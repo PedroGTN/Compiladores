@@ -12,12 +12,12 @@ from Vocabulary import Vocabulary
 from VisitorInterp import VisitorInterp
 
 #Arrumando input caso esteja pra Windows e não linux
-# archive_input = sys.argv[1].replace('\\', '/')
-# archive_output = sys.argv[2].replace('\\', '/')
+archive_input = sys.argv[1].replace('\\', '/')
+archive_output = sys.argv[2].replace('\\', '/')
 
 # Caso esteja usando linux
-archive_input = sys.argv[1]
-archive_output = sys.argv[2]
+# archive_input = sys.argv[1]
+# archive_output = sys.argv[2]
 
 
 #Criando input_string como utf-8 pra não dar problema com acentos

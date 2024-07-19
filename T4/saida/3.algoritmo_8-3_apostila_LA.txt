@@ -1,0 +1,24 @@
+Linha 4: identificador tVinho nao declarado
+Linha 5: identificador nome nao declarado
+Linha 6: identificador tipoVinho nao declarado
+Linha 7: identificador preco nao declarado
+Linha 10: tipo tVinho nao declarado
+Linha 13: identificador preco nao declarado
+Linha 22: identificador nome nao declarado
+Linha 16: identificador Preco nao declarado
+Linha 16: identificador tipoVinho nao declarado
+Linha 19: identificador preco nao declarado
+Linha 19: identificador preco nao declarado
+Linha 22: identificador nome nao declarado
+Linha 22: identificador nome nao declarado
+Linha 28: identificador preco nao declarado
+Linha 28: identificador nome nao declarado
+Linha 28: identificador preco nao declarado
+Linha 28: identificador vinhocaro nao declarado
+Linha 28: identificador tipoVinho nao declarado
+Linha 25: identificador preco nao declarado
+Linha 28: identificador nome nao declarado
+Linha 28: identificador preco nao declarado
+Linha 28: identificador vinhocaro nao declarado
+Linha 28: identificador tipoVinho nao declarado
+Fim da compilacao

@@ -1,0 +1,2 @@
+Linha 3: identificador maioridade nao declarado
+Fim da compilacao
