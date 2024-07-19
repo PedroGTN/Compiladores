@@ -2,7 +2,7 @@ import os
 current_dir = os.path.dirname(__file__)
 os.chdir(current_dir)
 
-instances_path = "../casos-de-teste/3.casos_teste_t3"
+instances_path = "../casos-de-teste/4.casos_teste_t4"
 output_path = "saida/"
 
 if not os.path.exists(output_path):
@@ -25,4 +25,4 @@ for i in input_list:
     os.system(str(command1))
 #     print('\n' + str(command2))
     os.system(str(command2))
-    #input("\nAperte enter para continuar...")
+    input("\nAperte enter para continuar...")

@@ -7,7 +7,7 @@ from Vocabulary import Vocabulary
 from antlr4.tree.Tree import TerminalNodeImpl
 import re
 
-debug = 0
+debug = 1
 
 
 class VisitorInterp(JanderListener):
@@ -20,6 +20,17 @@ class VisitorInterp(JanderListener):
         self.dict["CADEIA"] = 'literal'
         self.dict['verdadeiro'] = 'logico'
         self.dict['falso'] = 'logico'
+        self.dict['REGISTRO'] = 'registro'
+
+        # self.tipagem["NUM_INT"] = 'inteiro'
+        # self.tipagem["NUM_REAL"] = 'real'
+        # self.tipagem["CADEIA"] = 'literal'
+        # self.tipagem['verdadeiro'] = 'logico'
+        # self.tipagem['falso'] = 'logico'
+        # self.tipagem['REGISTRO'] = 'registro'
+        # self.scopo = dict()
+        # self.scopo['global'] = {}
+
         self.out = out
         JanderParser.ProgramaContext.start
 
@@ -55,6 +66,7 @@ class VisitorInterp(JanderListener):
             line_dict[line[l]] = line2[l]
 
         if(line[0] == 'declare'):
+            print(self.dict)
                 # print("declaracao")
             if not self.vocab.isToken(line[-1]):
                     self.out.write('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
