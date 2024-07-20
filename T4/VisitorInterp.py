@@ -20,16 +20,18 @@ class VisitorInterp(JanderListener):
         self.dict["CADEIA"] = 'literal'
         self.dict['verdadeiro'] = 'logico'
         self.dict['falso'] = 'logico'
-        self.dict['REGISTRO'] = 'registro'
 
+
+        # self.tipagem = {}
         # self.tipagem["NUM_INT"] = 'inteiro'
         # self.tipagem["NUM_REAL"] = 'real'
         # self.tipagem["CADEIA"] = 'literal'
         # self.tipagem['verdadeiro'] = 'logico'
         # self.tipagem['falso'] = 'logico'
         # self.tipagem['REGISTRO'] = 'registro'
+
         # self.scopo = dict()
-        # self.scopo['global'] = {}
+        # # self.scopo['global'] = {}
 
         self.out = out
         JanderParser.ProgramaContext.start
@@ -61,24 +63,36 @@ class VisitorInterp(JanderListener):
     
 
     def analyzeLine(self, line, line2):
+        print("dict comeco", self.dict)
+
         line_dict = dict()
         for l in range(len(line)):
             line_dict[line[l]] = line2[l]
 
+        # print('linha', line_dict)
+
         if(line[0] == 'declare'):
-            print(self.dict)
                 # print("declaracao")
             if not self.vocab.isToken(line[-1]):
                     self.out.write('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
                     if debug:
                         print('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
             for k in line[1:-2]:
+                if k == ':':
+                    continue
                 if k in self.dict.keys():
                     self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                     if debug:
                         print('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                 else:
-                    self.dict[k] = line[-1]
+                    print("linha inteira", line)
+                    if line[-2] == '^':
+                        ponteiro = line[-2] + line[-1]
+                        print("entrou ponteiro", ponteiro)
+                        self.dict[k] = ponteiro
+                    else:
+                        print('entrou variavel', line[-1])
+                        self.dict[k] = line[-1]
         else:
             for k in line:
                 # print(k, self.vocab.isToken(k), k in self.dict.keys())
@@ -89,20 +103,30 @@ class VisitorInterp(JanderListener):
 
         if(line[1] == '<-'):
             # print("atribuicao")
-            # print(line)
+            print("linha inteira", line)
+            # print(self.dict)
+            print(self.dict[line[0]], line[0])
             if self.dict[line[0]] == 'logico':
                 for k in line[1:]:
                     # print(k)
                     if k in self.dict.keys():
+                        print("aa")
                         if self.dict[k] == 'literal':
                             self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
                             if debug:
                                 print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
+            # elif self.dict[line[0]][0] == '^':
+            #     pass
             else:
                 for k in line[1:]:
                     # print(k)
                     if k in self.dict.keys():
                         if self.dict[k] !=  self.dict[line[0]] and not (self.dict[k] == 'inteiro' and self.dict[line[0]] == 'real'):
+                            print('b', k)
+                            print("bb", self.dict[k])
+                            print("bbb", self.dict[line[0]])
+                            print('bbbb', line[0])
+
                             self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
                             if debug:
                                 print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
@@ -120,7 +144,7 @@ class VisitorInterp(JanderListener):
             for k in range(len(lines_list)-1):
                 self.analyzeLine(line[lines_list[k]:lines_list[k+1]+1], line2[lines_list[k]:lines_list[k+1]+1])
 
-        
+        print('\n\n')
 
 
 

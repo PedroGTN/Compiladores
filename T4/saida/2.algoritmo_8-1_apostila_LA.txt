@@ -1,2 +1,1 @@
-Linha 6: identificador : ja declarado anteriormente
 Fim da compilacao

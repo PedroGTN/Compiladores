@@ -13,6 +13,7 @@ input_list = os.listdir(instances_path + '/entrada')
 for i in input_list:
     #comando para rodar o t2.py, onde ele coloca o path do arquivo de entrada 
     #e o do arquivo de saida
+    print("problema a ser resolvido: ", i)
     command1 = 'python3 t3.py ' + instances_path + '/entrada/' + i 
     command1 += ' ' + output_path + i
     
