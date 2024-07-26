@@ -1,2 +1,1 @@
 Linha 7: identificador NUM_INT ja declarado anteriormente
-Linha 19: identificador media_final nao declarado

@@ -15,11 +15,11 @@ class VisitorInterp(JanderListener):
         self.vocab = Vocabulary(lexer)
         self.ctx = ctx
         self.dict = dict()
-        self.dict["NUM_INT"] = 'inteiro'
-        self.dict["NUM_REAL"] = 'real'
-        self.dict["CADEIA"] = 'literal'
-        self.dict['verdadeiro'] = 'logico'
-        self.dict['falso'] = 'logico'
+        self.dict["NUM_INT"] = {'type':'inteiro'}
+        self.dict["NUM_REAL"] = {'type':'real'}
+        self.dict["CADEIA"] = {'type':'literal'}
+        self.dict['verdadeiro'] = {'type':'logico'}
+        self.dict['falso'] = {'type':'logico'}
 
 
         # self.tipagem = {}
@@ -31,7 +31,7 @@ class VisitorInterp(JanderListener):
         # self.tipagem['REGISTRO'] = 'registro'
 
         # self.scopo = dict()
-        # # self.scopo['global'] = {}
+        # self.scopo['global'] = {}
 
         self.out = out
         JanderParser.ProgramaContext.start
@@ -43,7 +43,8 @@ class VisitorInterp(JanderListener):
             for j in range(self.ctx.getChild(i).getChildCount()):
                 
                 text = self.visitToken(self.ctx.getChild(i).getChild(j))
-                if debug>1:
+                if debug:
+                    print("AAAAAAAAAA\n")
                     print(text)
                 line_split = []
                 for k in text.split():
@@ -89,10 +90,10 @@ class VisitorInterp(JanderListener):
                     if line[-2] == '^':
                         ponteiro = line[-2] + line[-1]
                         print("entrou ponteiro", ponteiro)
-                        self.dict[k] = ponteiro
+                        self.dict[k] = {"type":ponteiro}
                     else:
                         print('entrou variavel', line[-1])
-                        self.dict[k] = line[-1]
+                        self.dict[k] = {'type':line[-1]}
         else:
             for k in line:
                 # print(k, self.vocab.isToken(k), k in self.dict.keys())
@@ -106,6 +107,7 @@ class VisitorInterp(JanderListener):
             print("linha inteira", line)
             # print(self.dict)
             print(self.dict[line[0]], line[0])
+            print(line_dict)
             if self.dict[line[0]] == 'logico':
                 for k in line[1:]:
                     # print(k)
@@ -115,13 +117,19 @@ class VisitorInterp(JanderListener):
                             self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
                             if debug:
                                 print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
+
             # elif self.dict[line[0]][0] == '^':
             #     pass
             else:
                 for k in line[1:]:
                     # print(k)
                     if k in self.dict.keys():
-                        if self.dict[k] !=  self.dict[line[0]] and not (self.dict[k] == 'inteiro' and self.dict[line[0]] == 'real'):
+                        print('b', k)
+                        print("bb", self.dict[k])
+                        print("bbb", self.dict[line[0]])
+                        print('bbbb', line[0])
+
+                        if self.dict[k]['type'] !=  self.dict[line[0]]['type'] and not (self.dict[k]['type'] == 'inteiro' and self.dict[line[0]]['type'] == 'real'):
                             print('b', k)
                             print("bb", self.dict[k])
                             print("bbb", self.dict[line[0]])
@@ -130,6 +138,9 @@ class VisitorInterp(JanderListener):
                             self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
                             if debug:
                                 print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
+                        # elif self.dict[k]['type'] == 
+                        else:
+                            self.dict[line[0]]['content'] = self.dict[k]['content']
 
         elif(line[0] == 'se'):
             lines_list = []
