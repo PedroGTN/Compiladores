@@ -21,6 +21,10 @@ class Vocabulary():
     
         return 1000
     
+    def add_key(self, name):
+        self.vocab_dict[name] = name
+
+    
 
     #Abre arquivo de tokens e coloca eles em um dicionário
     def __init__(self, Lexer):
