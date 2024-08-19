@@ -6,19 +6,21 @@ from JanderListener import JanderListener
 from Vocabulary import Vocabulary
 from antlr4.tree.Tree import TerminalNodeImpl
 import re
+from scope_dict import Scope_Dict
 
-debug = 1
+debug = 0
 
 class VisitorInterp(JanderListener):
     def __init__(self, ctx:JanderParser.ProgramaContext, lexer:JanderLexer, out):
         self.vocab = Vocabulary(lexer)
         self.ctx = ctx
-        self.dict = dict()
-        self.dict["NUM_INT"] = 'inteiro'
-        self.dict["NUM_REAL"] = 'real'
-        self.dict["CADEIA"] = 'literal'
-        self.dict['verdadeiro'] = 'logico'
-        self.dict['falso'] = 'logico'
+        self.regdict = dict()
+        self.dict = Scope_Dict()
+        self.dict.add("NUM_INT", 'inteiro')
+        self.dict.add("NUM_REAL", 'real')
+        self.dict.add("CADEIA", 'literal')
+        self.dict.add("verdadeiro", 'logico')
+        self.dict.add("falso", 'logico')
         self.out = out
         JanderParser.ProgramaContext.start
 
@@ -59,60 +61,114 @@ class VisitorInterp(JanderListener):
             else:
                 i+=1
 
+        i = 0
+        while(i < len(line)):
+            if line[i] == '.':
+                line[i-1] = line[i-1] + line[i] + line[i+1]
+                line.pop(i)
+                line.pop(i)
+                line2.pop(i)
+                line2.pop(i)
+            else:
+                i+=1
+
         line_dict = dict()
         for l in range(len(line)):
             line_dict[line[l]] = line2[l]
 
 
-
-        if(line[0] == 'declare'):
+        if line[0] == 'tipo':
+            if debug>1:
+                print("declaracao registro")
+                print(line)
+            self.vocab.add_key(line[1])
+            self.dict.add(line[1], "registro")
+            self.regdict[line[1]] = []
+            ind = line.index(':')
+            reglist = line[ind+2:]
+            while ':' in reglist:
+                dot = reglist.index(':')
+                for l in reglist[:dot]:
+                    self.regdict[line[1]].append([l, reglist[dot+1]])
+                reglist = reglist[dot+2:]
+            
+            if debug>1:
+                print(self.regdict[line[1]])
+        elif line[0] == 'declare':
                 # print("declaracao")
             if debug>1:
                 print(line[-2])
             #se o penultimo item da linha for um ^ sabemos que é um ponteiro
-            if line[-1][0] == '^':
-                self.vocab.add_key(line[-1]) #adicionando o tipo ponteiro ao dicionário
-
-                for k in line[1:-2]:
-                    if k in self.dict.keys():
+            # print(line[-1])
+            if line[-1] == 'fim_registro':
+                ind = line.index(':')
+                for k in line[1:ind]:
+                    if self.dict.search(k):
                         self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                         if debug:
                             print('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                     else:
-                        self.dict[k] = line[-1]
-                        self.dict['^'+k] = line[-1][1:]
+                        self.dict.add(k, "registro")
+                        reglist = line[ind+2:]
+                        while ':' in reglist:
+                            dot = reglist.index(':')
+                            for r in reglist[:dot]:
+                                self.dict.add(k + '.' + r, reglist[dot+1])
+                            reglist = reglist[dot+2:]
+                if debug>1:
+                    self.dict.print()
+
+            elif line[-1][0] == '^':
+                self.vocab.add_key(line[-1]) #adicionando o tipo ponteiro ao dicionário
+
+                for k in line[1:-2]:
+                    if self.dict.search(k):
+                        self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
+                        if debug:
+                            print('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
+                    else:
+                        self.dict.add(k, line[-1])
+                        self.dict.add('^'+k, line[-1][1:])
                 
                 if debug>0:
                     print("ponteiro")
 
+            elif line[-1] in self.regdict.keys():
+                if not self.vocab.isToken(line[-1]):
+                        self.out.write('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
+                        if debug:
+                            print('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
+                for k in line[1:-2]:
+                    if self.dict.search(k):
+                        self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
+                        if debug:
+                            print('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
+                    else:
+                        self.dict.add(k, line[-1])
+                        for r in self.regdict[line[-1]]:
+                            self.dict.add(k + '.' + r[0], r[1])
+                if debug>0:
+                    self.dict.print()            
             else:
                 if not self.vocab.isToken(line[-1]):
                         self.out.write('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
                         if debug:
                             print('Linha ' + line_dict[line[-1]] + ': tipo ' + line[-1] + ' nao declarado\n')
                 for k in line[1:-2]:
-                    if k in self.dict.keys():
+                    if self.dict.search(k):
                         self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                         if debug:
                             print('Linha ' + line_dict[k] + ': identificador ' + k + ' ja declarado anteriormente\n')
                     else:
-                        self.dict[k] = line[-1]
-                        self.dict['&' + k] = '^'+line[-1]
-        else:
-            for k in line:
-                # print(k, self.vocab.isToken(k), k in self.dict.keys())
-                if not self.vocab.isToken(k) and not k in self.dict.keys():
-                    self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado\n')
-                    if debug:
-                        print('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado')
-
-        if(line[1] == '<-'):
+                        self.dict.add(k, line[-1])
+                        self.dict.add('&' + k, '^'+line[-1])
+        elif(line[1] == '<-'):
             # print("atribuicao")
             # print(line)
-            if self.dict[line[0]] == 'logico':
+            if self.dict.search_text(line[0]) == 'logico':
                 for k in line[1:]:
                     # print(k)
-                    if k in self.dict.keys():
+                    if self.dict.search(k):
                         if self.dict[k] == 'literal':
                             self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
                             if debug:
@@ -120,8 +176,8 @@ class VisitorInterp(JanderListener):
             else:
                 for k in line[1:]:
                     # print(k)
-                    if k in self.dict.keys():
-                        if self.dict[k] !=  self.dict[line[0]] and not (self.dict[k] == 'inteiro' and self.dict[line[0]] == 'real'):
+                    if self.dict.search(k):
+                        if self.dict.search_text(k) !=  self.dict.search_text(line[0]) and not (self.dict.search_text(k) == 'inteiro' and self.dict.search_text(line[0]) == 'real'):
                             self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
                             if debug:
                                 print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
@@ -137,7 +193,17 @@ class VisitorInterp(JanderListener):
                 elif  line[k] == 'fim_se':
                     lines_list.append(k-1)
             for k in range(len(lines_list)-1):
+                print(line[lines_list[k]:lines_list[k+1]+1])
                 self.analyzeLine(line[lines_list[k]:lines_list[k+1]+1], line2[lines_list[k]:lines_list[k+1]+1])
+        else:
+            for k in line:
+                # print(k, self.vocab.isToken(k), k in self.dict.keys())
+                if not self.vocab.isToken(k) and not self.dict.search(k):
+                    self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado\n')
+                    if debug:
+                        print('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado')
+            if debug>1:
+                print(line)
 
         
 
