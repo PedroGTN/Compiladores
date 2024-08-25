@@ -1,2 +1,2 @@
-Linha 3: identificador maioridade nao declarado
+Linha 9: identificador maioridade ja declarado anteriormente
 Fim da compilacao

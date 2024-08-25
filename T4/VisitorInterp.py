@@ -15,6 +15,7 @@ class VisitorInterp(JanderListener):
         self.vocab = Vocabulary(lexer)
         self.ctx = ctx
         self.regdict = dict()
+        self.funcdict = dict()
         self.dict = Scope_Dict()
         self.dict.add("NUM_INT", 'inteiro')
         self.dict.add("NUM_REAL", 'real')
@@ -30,7 +31,7 @@ class VisitorInterp(JanderListener):
         for i in range(self.ctx.getChildCount()):
             for j in range(self.ctx.getChild(i).getChildCount()):
                 
-                text = self.visitToken(self.ctx.getChild(i).getChild(j))
+                text, text2 = self.visitToken(self.ctx.getChild(i).getChild(j))
                 if debug>1:
                     print(text)
                 line_split = []
@@ -38,20 +39,44 @@ class VisitorInterp(JanderListener):
                 for k in text.split():
                     line_split.append(k.split('|'))
                 line, line2 = map(list, zip(*line_split))
-                # print(line)
-                # print(line2)
-                # print(re.sub('[0-9]', '', text))
-                # print(re.sub('[^0-9]', '', text))
-                # line = re.sub('[0-9]', '', text).split()
-                # line2 = re.sub('[^0-9]', '', text)
             
-                self.analyzeLine(line, line2)
+                self.analyzeLine(line, line2, text2.split())
 
         # print(self.dict)
         return 
     
 
-    def analyzeLine(self, line, line2):
+    def arrumarlinhas(self, line, line2, line3):
+
+        if debug>1:
+            print("linha1|linha2",len(line), len(line2))
+            print(line, '\n', line2)
+
+        if line3:
+            i = 0
+            while(i < len(line)):
+                if '"' in line[i]:
+                    if line[i][-1] == '"':
+                        break
+                    j = i + 1
+                    while(j < len(line)):
+                        if '"' in line[j]:
+                            break
+                        j += 1
+                    # print("outside", i, j, len(line))
+                    for k in range(i, j):
+                        # print("inside", i, j, len(line))
+                        line[i] = line[i] + ' ' + line[i+1]
+                        line.pop(i+1)
+
+                i += 1            
+
+
+        if debug>1:
+            print("linha1|linha2",len(line), len(line2))
+            print(line, '\n', line2)
+
+
         i = 0
         while(i < len(line)):
             if line[i] == '^' or line[i] == '&':
@@ -72,12 +97,138 @@ class VisitorInterp(JanderListener):
             else:
                 i+=1
 
+        i = 0
+        while(i < len(line)):
+            if line[i] == '[':
+                ind = line[i:].index(']')
+                for j in range(i, i+ind+1):
+                    line[i-1] += line[j]
+
+                for j in range(i, i+ind+1):
+                    line.pop(i)
+                    line2.pop(i)
+            else:
+                i+=1
+
+        return [line, line2]
+
+
+    def analyzeLine(self, line, line2, line3):
+        if len(line) < 2:
+            return
+
+        nl1 = self.arrumarlinhas(line, line2.copy(), False)
+        nl2 = self.arrumarlinhas(line3, line2, True)
+
+
+        if debug>1:
+            print(line, '\n', line3)
+
+        checkvar = 1
+        checkfun = 1
+        close_scope = 0
+
+        
         line_dict = dict()
         for l in range(len(line)):
             line_dict[line[l]] = line2[l]
 
+        if line[0] == 'constante':
+            ind = line.index(':')
+            for i in range(1, ind):
+                self.dict.add(line[i], line[ind+1])
+                self.dict.add('&' + line[i], '^'+line[ind+1])
 
-        if line[0] == 'tipo':
+        elif line[0] == 'procedimento':
+            checkfun = 0
+            self.dict.add(line[1], 'void')
+            self.dict.change_scope(1)
+            close_scope = 1
+
+            if debug>0:
+                print("procedimento")
+                print(line)
+            self.funcdict[line[1]] = []
+
+            abrepar = line.index('(')
+            fechapar = line.index(')')
+
+            lineaz = line[abrepar+1 : fechapar].copy()
+            flag = 1
+            while ':' in lineaz:
+                ind = lineaz.index(':')
+                if lineaz[ind+1] in self.regdict.keys():
+                    self.dict.add(lineaz[ind-1], lineaz[ind+1])
+                    for r in self.regdict[lineaz[ind+1]]:
+                        self.dict.add(lineaz[ind-1] + '.' + r[0], r[1])
+                else:    
+                    self.dict.add(lineaz[ind-1], lineaz[ind+1])
+                self.funcdict[line[1]].append(lineaz[ind+1])
+                lineaz.pop(ind)
+            
+            # self.funcdict[line[1]].append('void')
+
+            fim_proced = line.index('fim_procedimento')
+            last_line = line2[fechapar+1]
+            last_ind = fechapar+1
+            lines_list = []
+            for i in range(fechapar+1, fim_proced):
+                if(last_line != line2[i]):
+                    lines_list.append([last_ind, i])
+                    last_line = line2[i]
+                    last_ind = i
+
+
+            for k in lines_list:
+                self.analyzeLine(line[k[0]:k[1]], line2[k[0]:k[1]], line3[k[0]:k[1]])
+
+
+            if debug > 0:
+                print("fdict",self.funcdict)
+            
+            for k in line:
+                if k == 'retorne':
+                    self.out.write('Linha ' + line_dict[k] + ': comando retorne nao permitido nesse escopo\n')
+                    if debug:
+                        print('Linha ' + line_dict[k] + ': comando retorne nao permitido nesse escopo\n')
+
+
+        elif line[0] == 'funcao':
+            checkfun = 0
+            ind = line.index(')')
+            self.dict.add(line[1], line[ind+2])
+
+            self.dict.change_scope(1)
+            close_scope = 1
+
+            if debug:
+                print("funcao")
+                print(line)
+            self.funcdict[line[1]] = []
+
+            abrepar = line.index('(')
+            fechapar = line.index(')')
+
+            lineaz = line[abrepar+1 : fechapar].copy()
+            flag = 1
+            while ':' in lineaz:
+                ind = lineaz.index(':')
+                if lineaz[ind+1] in self.regdict.keys():
+                    self.dict.add(lineaz[ind-1], lineaz[ind+1])
+                    for r in self.regdict[lineaz[ind+1]]:
+                        self.dict.add(lineaz[ind-1] + '.' + r[0], r[1])
+                else:    
+                    self.dict.add(lineaz[ind-1], lineaz[ind+1])
+                self.funcdict[line[1]].append(lineaz[ind+1])
+                lineaz.pop(ind)
+
+            # self.funcdict[line[1]].append(line[fechapar+2])
+
+            if debug > 0:
+                print("fdict",self.funcdict)
+
+        elif line[0] == 'tipo':
+            checkvar = 0
             if debug>1:
                 print("declaracao registro")
                 print(line)
@@ -95,12 +246,14 @@ class VisitorInterp(JanderListener):
             if debug>1:
                 print(self.regdict[line[1]])
         elif line[0] == 'declare':
+            checkfun = 0
                 # print("declaracao")
             if debug>1:
                 print(line[-2])
             #se o penultimo item da linha for um ^ sabemos que é um ponteiro
             # print(line[-1])
             if line[-1] == 'fim_registro':
+                checkvar = 0
                 ind = line.index(':')
                 for k in line[1:ind]:
                     if self.dict.search(k):
@@ -163,26 +316,27 @@ class VisitorInterp(JanderListener):
                         self.dict.add(k, line[-1])
                         self.dict.add('&' + k, '^'+line[-1])
         elif(line[1] == '<-'):
+            if self.dict.search(line[0]):
             # print("atribuicao")
             # print(line)
-            if self.dict.search_text(line[0]) == 'logico':
-                for k in line[1:]:
-                    # print(k)
-                    if self.dict.search(k):
-                        if self.dict[k] == 'literal':
-                            self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
-                            if debug:
-                                print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
-            else:
-                for k in line[1:]:
-                    # print(k)
-                    if self.dict.search(k):
-                        if self.dict.search_text(k) !=  self.dict.search_text(line[0]) and not (self.dict.search_text(k) == 'inteiro' and self.dict.search_text(line[0]) == 'real'):
-                            self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0] + '\n')
-                            if debug:
-                                print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line[0])
+                if self.dict.search_text(line[0]) == 'logico':
+                    for k in line[1:]:
+                        # print(k)
+                        if self.dict.search(k):
+                            if self.dict.search_text(k) == 'literal':
+                                self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line3[0] + '\n')
+                                if debug:
+                                    print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line3[0])
+                else:
+                    for k in line[1:]:
+                        # print(k)
+                        if self.dict.search(k):
+                            if self.dict.search_text(k) !=  self.dict.search_text(line[0]) and not (self.dict.search_text(k) == 'inteiro' and self.dict.search_text(line[0]) == 'real'):
+                                self.out.write('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line3[0] + '\n')
+                                if debug:
+                                    print('Linha ' + line_dict[line[0]] +': atribuicao nao compativel para ' + line3[0])
 
-        elif(line[0] == 'se'):
+        if(line[0] == 'se'):
             lines_list = []
             for k in range(len(line)):
                 if line[k] == 'senao' or line[k] == 'entao':    
@@ -193,16 +347,58 @@ class VisitorInterp(JanderListener):
                 elif  line[k] == 'fim_se':
                     lines_list.append(k-1)
             for k in range(len(lines_list)-1):
-                print(line[lines_list[k]:lines_list[k+1]+1])
-                self.analyzeLine(line[lines_list[k]:lines_list[k+1]+1], line2[lines_list[k]:lines_list[k+1]+1])
+                if debug:
+                    print(line[lines_list[k]:lines_list[k+1]+1])
+                self.analyzeLine(line[lines_list[k]:lines_list[k+1]+1], line2[lines_list[k]:lines_list[k+1]+1], line3[lines_list[k]:lines_list[k+1]+1])
         else:
-            for k in line:
+            pilhaparam = []
+            for i in range(len(line)):
                 # print(k, self.vocab.isToken(k), k in self.dict.keys())
-                if not self.vocab.isToken(k) and not self.dict.search(k):
-                    self.out.write('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado\n')
+                if line[i] in self.funcdict.keys() and checkfun:
+
+                    if len(pilhaparam):
+
+                        if pilhaparam[-1][0] != self.dict.search_text(line[i]):
+                            self.out.write('Linha ' + line_dict[line[i]] + ': incompatibilidade de parametros na chamada de ' + pilhaparam[-1][1]+ '\n')
+                            if debug>0:
+                                print('Linha ' + line_dict[line[i]] + ': wrong type of return of func ' + pilhaparam[-1][1] + '\n', line[i], self.dict.search_text(line[i]), pilhaparam[-1][0])
+                        pilhaparam.pop(-1)
+
+                    for k in self.funcdict[line[i]]:
+                        pilhaparam.append([k, line[i], line_dict[line[i]]])
+
+                elif len(pilhaparam):
+
+                    if self.dict.search_text(line[i]) != 'NULL':
+                        if pilhaparam[-1][0] != self.dict.search_text(line[i]):
+                            self.out.write('Linha ' + line_dict[line[i]] + ': incompatibilidade de parametros na chamada de ' + pilhaparam[-1][1] + '\n')
+                            if debug>0:
+                                print('Linha ' + line_dict[line[i]] + ': wrong type of var ' + pilhaparam[-1][1] + '\n', line[i], self.dict.search_text(line[i]), pilhaparam)
+    
+                        pilhaparam.pop(-1)
+            
+                if not self.vocab.isToken(line[i]) and not self.dict.search(line[i]) and checkvar:
+                    self.out.write('Linha ' + line_dict[line[i]] + ': identificador ' + line[i] + ' nao declarado\n')
                     if debug:
-                        print('Linha ' + line_dict[k] + ': identificador ' + k + ' nao declarado')
-            if debug>1:
+                        print('Linha ' + line_dict[line[i]] + ': identificador ' + line[i] + ' nao declarado')
+
+                if line[i] == 'retorne' and checkfun:
+                    self.out.write('Linha ' + line_dict[line[i]] + ': comando retorne nao permitido nesse escopo\n')
+                    if debug:
+                        print('Linha ' + line_dict[line[i]] + ': comando retorne nao permitido nesse escopo\n')
+
+
+            if pilhaparam:
+                self.out.write('Linha ' + pilhaparam[-1][2] + ': incompatibilidade de parametros na chamada de ' + pilhaparam[-1][1] + '\n')
+                if debug>0:
+                    print('Linha ' + pilhaparam[-1][2] + ': too little params ' + pilhaparam[-1][1] + '\n', line[i], self.dict.search_text(line[i]), pilhaparam)
+
+            if close_scope:
+                self.dict.change_scope(-1)
+
+            if debug>0:
+                print(pilhaparam)
+                print("checkfun|checkvar", checkfun, checkvar)
                 print(line)
 
         
@@ -230,19 +426,25 @@ class VisitorInterp(JanderListener):
         if ret > 0:
             if self.vocab.getTypeName(ret) == 'IDENT':
                 text = token.getText() + '|' + line + " "
+                text2 = token.getText() + " "
             elif self.vocab.getTypeName(ret) == ',':
                 text = ''
+                text2 = ''
             else:
                 text = self.vocab.getTypeName(ret) + '|' + line + " "
+                text2 = token.getText() + " "
         else:
             text = ''
+            text2 = ''
         if not isinstance(token, TerminalNode):
             for i in range(token.getChildCount()):
-                text += self.visitToken(token.getChild(i))
+                text_final = self.visitToken(token.getChild(i))
+                text += text_final[0]
+                text2 += text_final[1]
 
         
 
-        return text
+        return [text,text2]
 
 
     # def visitToken(self, ctx):

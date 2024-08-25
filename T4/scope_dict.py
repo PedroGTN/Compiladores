@@ -7,11 +7,29 @@ class Scope_Dict():
         else:
             self.dict.pop(-1)
 
-    def add(self, type, name):
-        self.dict[self.scope][type] = name
+    def add(self, name, type):
+        if '[' in name:
+            if '.' in name:
+                ind = name.index('[')
+                nt = name[:ind]
+                ind = name.index(']')
+                name = nt + name[ind+1:]
+            else:
+                ind = name.index('[')
+                name = name[:ind]
+        self.dict[self.scope][name] = type
 
 
     def search(self, token):
+        if '[' in token:
+            if '.' in token:
+                ind = token.index('[')
+                nt = token[:ind]
+                ind = token.index(']')
+                token = nt + token[ind+1:]
+            else:
+                ind = token.index('[')
+                token = token[:ind]
         i = self.scope
         flag = False
         while(i>=0):
@@ -25,6 +43,15 @@ class Scope_Dict():
 
 
     def search_text(self, token):
+        if '[' in token:
+            if '.' in token:
+                ind = token.index('[')
+                nt = token[:ind]
+                ind = token.index(']')
+                token = nt + token[ind+1:]
+            else:
+                ind = token.index('[')
+                token = token[:ind]
         i = self.scope
         ret = "NULL"
         while(i>=0):
