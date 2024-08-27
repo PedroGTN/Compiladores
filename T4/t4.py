@@ -44,7 +44,7 @@ with open(archive_output, 'w') as out:
         vinterp = VisitorInterp(tree, lexer, out)
         vinterp.visitPrograma()
 
-    out.write('Fim da compilacao')
+    out.write('Fim da compilacao\n')
     
 
     Token.type
